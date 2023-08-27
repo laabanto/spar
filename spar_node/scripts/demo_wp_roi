@@ -69,6 +69,8 @@ class Guidance():
 			self.sub_pose = rospy.Subscriber("~pose", PoseStamped, self.callback_pose)
 			# Subscriber to catch "ROI" diversion commands
 			self.sub_roi = rospy.Subscriber("~roi", PoseStamped, self.callback_inspect_roi)
+			# Subscriber to monitor battery level
+			self.sub_battery = rospy.Subscriber("/mavros/battery", BatteryState, battery_callback)
 
 			# XXX: Could have a publisher to output our waypoint progress
 			# throughout the flight (should publish each time the waypoint
@@ -211,6 +213,12 @@ class Guidance():
 		self.spar_client.send_goal(goal)
 		 # If shutdown is issued, cancel current mission before rospy is shutdown
 		rospy.on_shutdown(lambda : self.spar_client.cancel_goal())
+
+	def battery_callback(data):
+    		rospy.loginfo("Battery Voltage: %f V", data.voltage)
+    		rospy.loginfo("Battery Percentage: %f %%", data.percentage)
+		if data.percentage < 15:
+			rospy.loginfo("WARNING: Low battery level. Land immediately")
 
 
 	# This function will fire whenever we recieve a timer event (te) from rospy.Timer()
