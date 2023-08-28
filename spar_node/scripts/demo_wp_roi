@@ -11,6 +11,8 @@ from geometry_msgs.msg import Point, PoseStamped
 
 from spar_msgs.msg import FlightMotionAction, FlightMotionGoal
 
+from custom_msgs.msg import Imagery_Message
+
 from sensor_msgs.msg import BatteryState
 
 
